@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "my-deep-learning-from-scratch"
+version = "0.1.0"
+description = ""
+authors = ["Rei Tsukada <rayzou1120@icloud.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
