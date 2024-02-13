@@ -66,6 +66,7 @@ def load_cifar(normalize = True,one_hot_label = True, flatten = True):
     with open(save_file,'rb') as f:
         dataset = pickle.load(f)
 
+    # 画像のピクセル値を0.0~1.0に正規化
     if normalize:
         for key in ('train_img','test_img'):
             dataset[key] = dataset[key].astype(np.float32) / 255.0
