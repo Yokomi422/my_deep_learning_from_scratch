@@ -6,22 +6,21 @@ sys.path.append("..")
 from common.functions import sigmoid,softmax
 
 
-def init_network():
-    with open("weight.pkl","r") as f:
-        network = pickle.load(f)
+class SimpleNeuralNetwork:
+    def __init__(self,input_size,hidden_size,output_size):
+        self.params = {}
+        self.params["W1"] = np.random.randn(input_size,hidden_size)
+        self.params["b1"] = np.zeros(hidden_size)
+        self.params["W2"] = np.random.randn(hidden_size,output_size)
+        self.params["b2"] = np.zeros(output_size)
 
-    return network
+    def predict(self, x):
+        W1,W2 = self.params['W1'],self.params['W2']
+        b1,b2 = self.params['b1'],self.params['b2']
 
+        a1 = np.dot(x,W1) + b1
+        z1 = sigmoid(a1)
+        a2 = np.dot(z1,W2) + b2
+        y = softmax(a2)
 
-def predict(network,x):
-    W1,W2,W3 = network['W1'],network['W2'],network['W3']
-    b1,b2,b3 = network['b1'],network['b2'],network['b3']
-
-    a1 = np.dot(x,W1) + b1
-    z1 = sigmoid(a1)
-    a2 = np.dot(z1,W2) + b2
-    z2 = sigmoid(a2)
-    a3 = np.dot(z2,W3) + b3
-    y = softmax(a3)
-
-    return y
+        return y
