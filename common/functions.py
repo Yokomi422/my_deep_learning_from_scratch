@@ -24,9 +24,21 @@ def softmax(a: np.ndarray) -> np.ndarray:
     return exp_a / np.sum(exp_a)
 
 
-def sigmoid(x: np.ndarray):
-    return 1 / (1 + np.exp(-x))
+def sigmoid(x):
+    """
+    Description:
+        引数が正の場合は、そのまま計算し、負の場合はオーバーフローを避ける
+    :param x:
+    :return:
+    """
+    pos_mask = (x >= 0)
+    neg_mask = (x < 0)
+    z = np.zeros_like(x)
 
+    z[pos_mask] = 1 / (1 + np.exp(-x[pos_mask]))
+
+    z[neg_mask] = np.exp(x[neg_mask]) / (1 + np.exp(x[neg_mask]))
+    return z
 
 def cross_entropy(y: np.ndarray,t: np.ndarray) -> float:
     """
