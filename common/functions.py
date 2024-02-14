@@ -3,15 +3,29 @@ import os,sys
 
 sys.path.append("..")
 
+from data.cifar import load_cifar
+
+(train_images,train_labels),(test_images,test_labels) = load_cifar()
+
 
 # 出力層の関数
-def softmax(a: np.ndarray):
+def softmax(a: np.ndarray) -> np.ndarray:
+    """
+    Parameters:
+        a: np.ndarray ニューラルネットワークの出力関数の正規化
+    Returns:
+        np.ndarray
+    """
     # それぞれのデータから最大値を取り出す
-    c = np.max(a, axis=-1, keepdims=True)
+    c = np.max(a,axis=-1,keepdims=True)
     # オーバーフロー対策と指数関数の特性を利用して、aの最大値を引いている
     # aを変更するのは良くない
     exp_a = np.exp(a - c)
     return exp_a / np.sum(exp_a)
+
+
+def sigmoid(x: np.ndarray):
+    return 1 / (1 + np.exp(-x))
 
 
 def cross_entropy(y: np.ndarray,t: np.ndarray) -> float:
