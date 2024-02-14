@@ -21,4 +21,23 @@ def cross_entropy(y: np.ndarray,t: np.ndarray) -> float:
     h = 1e-4
     y += h
     if y.ndim == 1:
-        return - np.sum(t * np.log(y))
+        y = y.reshape(1, y.size)
+        t = t.reshape(1, t.size)
+
+    if y.size == t.size:
+        t = t.argmax(axis=1)
+
+    batch_size = y.shape[0]
+
+    return - np.sum(np.log(y[np.arange(batch_size), t])) / batch_size
+
+
+
+
+
+t = np.array([[0,0,1,0,0,0,0,0,0,0],[2,4,1,4,1,51,5,1,5,2]])
+y = np.array([0.1,0.05,0.6,0.0,0.05,0.1,0.0,0.1,0.0,0.0])
+
+
+y = y.reshape(1, y.size)
+print(y.shape[0])
