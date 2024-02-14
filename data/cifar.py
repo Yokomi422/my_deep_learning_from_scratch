@@ -13,6 +13,8 @@ key_files = {
     'test': 'test_batch',
 }
 
+# __file__だけだと、実行されるモジュールになる
+par_dir = os.path.dirname(__file__)
 
 def _download():
     response = requests.get(url)
@@ -59,11 +61,11 @@ def _convert_labels_to_one_hot(labels,num_classes = 10):
     return np.eye(num_classes)[labels]
 
 
-def load_cifar(normalize = True,one_hot_label = True, flatten = True):
-    if not os.path.exists(save_file):
+def load_cifar(normalize = True,one_hot_label = True,flatten = True):
+    if not os.path.exists(par_dir + "/" + save_file):
         init_cifar()
 
-    with open(save_file,'rb') as f:
+    with open(par_dir + "/" + save_file,'rb') as f:
         dataset = pickle.load(f)
 
     # 画像のピクセル値を0.0~1.0に正規化
@@ -76,7 +78,7 @@ def load_cifar(normalize = True,one_hot_label = True, flatten = True):
         dataset['test_label'] = _convert_labels_to_one_hot(dataset['test_label'])
 
     if not flatten:
-         for key in ('train_img', 'test_img'):
-            dataset[key] = dataset[key].reshape(-1, 1, 32, 32)
+        for key in ('train_img','test_img'):
+            dataset[key] = dataset[key].reshape(-1,1,32,32)
 
     return (dataset['train_img'],dataset['train_label']),(dataset['test_img'],dataset['test_label'])
