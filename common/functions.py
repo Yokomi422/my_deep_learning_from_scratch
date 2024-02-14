@@ -3,9 +3,15 @@ import os,sys
 
 sys.path.append("..")
 
-from data.cifar import load_cifar
 
-(train_images,train_labels),(test_images,test_labels) = load_cifar()
+# 出力層の関数
+def softmax(a: np.ndarray):
+    # それぞれのデータから最大値を取り出す
+    c = np.max(a, axis=-1, keepdims=True)
+    # オーバーフロー対策と指数関数の特性を利用して、aの最大値を引いている
+    # aを変更するのは良くない
+    exp_a = np.exp(a - c)
+    return exp_a / np.sum(exp_a)
 
 
 def cross_entropy(y: np.ndarray,t: np.ndarray) -> float:
@@ -21,23 +27,12 @@ def cross_entropy(y: np.ndarray,t: np.ndarray) -> float:
     h = 1e-4
     y += h
     if y.ndim == 1:
-        y = y.reshape(1, y.size)
-        t = t.reshape(1, t.size)
+        y = y.reshape(1,y.size)
+        t = t.reshape(1,t.size)
 
     if y.size == t.size:
         t = t.argmax(axis=1)
 
     batch_size = y.shape[0]
 
-    return - np.sum(np.log(y[np.arange(batch_size), t])) / batch_size
-
-
-
-
-
-t = np.array([[0,0,1,0,0,0,0,0,0,0],[2,4,1,4,1,51,5,1,5,2]])
-y = np.array([0.1,0.05,0.6,0.0,0.05,0.1,0.0,0.1,0.0,0.0])
-
-
-y = y.reshape(1, y.size)
-print(y.shape[0])
+    return - np.sum(np.log(y[np.arange(batch_size),t])) / batch_size
