@@ -42,7 +42,7 @@ class SimpleNeuralNetwork:
         # W1やb1でどうして偏微分ができるのか。 predictのなかにW1やb1が入っていて、それを微小変化させている
         # paramsの値が微小変化している
         loss_W = lambda W: self.loss(x,t)
-        # どうして、tとxを固定していて、W1で偏微分をできるのかがわからない
+        # self.になっていることが重要
         grads = {'W1': numerical_gradient(loss_W,self.params['W1']),'b1': numerical_gradient(loss_W,self.params['b1']),
                  'W2': numerical_gradient(loss_W,self.params['W2']),'b2': numerical_gradient(loss_W,self.params['b2'])}
 
