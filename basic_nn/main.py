@@ -6,6 +6,7 @@ from data.cifar import load_cifar
 
 save_file = "trained_params.pkl"
 
+## TODO input_sizeとパラメータ数が多くて現実的な計算では終わらない.
 input_size = 3 * 32 * 32
 hidden_size = 100
 output_size = 10
@@ -21,6 +22,7 @@ batch_size = 100
 network = SimpleNeuralNetwork(input_size, hidden_size, output_size)
 
 for epoch in range(epochs):
+    # np.random.choice(x, y)は0からx-1の数字からランダムでy個の配列を重複ありで生成
     batch_mask = np.random.choice(x_train.shape[0],batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
