@@ -38,7 +38,7 @@ class SimpleNeuralNetwork:
         y = self.predict(x)
         return cross_entropy(y,t)
 
-    def numerical_gradient(self,x,t):
+    def calculate_numerical_gradient(self,x,t):
         loss_W = lambda W: self.loss(x,t)
         # どうして、tとxを固定していて、W1で偏微分をできるのかがわからない
         grads = {'W1': numerical_gradient(loss_W,self.params['W1']),'b1': numerical_gradient(loss_W,self.params['b1']),
