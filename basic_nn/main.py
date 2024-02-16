@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 
-from simple_net import SimpleNeuralNetwork
+from common.simple_net import SimpleNeuralNetwork
 from data.cifar import load_cifar
 
 save_file = "trained_params.pkl"
@@ -16,10 +16,10 @@ epochs = 100
 # バッチサイズは79ページ参照
 batch_size = 100
 
-(x_train, t_train), (x_test, t_test) = load_cifar(normalize=True, one_hot_label=True, flatten=True)
+(x_train,t_train),(x_test,t_test) = load_cifar(normalize=True,one_hot_label=True,flatten=True)
 
 # ニューラルネットワークの初期化
-network = SimpleNeuralNetwork(input_size, hidden_size, output_size)
+network = SimpleNeuralNetwork(input_size,hidden_size,output_size)
 
 for epoch in range(epochs):
     # np.random.choice(x, y)は0からx-1の数字からランダムでy個の配列を重複ありで生成
@@ -36,5 +36,5 @@ for epoch in range(epochs):
     loss = network.loss(x_batch,t_batch)
     print("Epoch: {}, Loss: {}".format(epoch + 1,loss))
 
-with open(save_file, 'wb') as f:
-    pickle.dump(network.params, f)
+with open(save_file,'wb') as f:
+    pickle.dump(network.params,f)
