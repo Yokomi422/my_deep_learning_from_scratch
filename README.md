@@ -3,8 +3,16 @@
 
 ## basic_nn
 ①の実装に必要な処理を書いておく
+
+### 第4章までの実装
 ```bash
 cd basic_nn
-poetry run python main.py
+poetry run python simple_neural_network.py
 ```
-で学習する. 
+で学習する.
+
+### 第5章までの実装
+```bash
+cd basic_nn
+poetry run python layered_neural_network.py
+```
