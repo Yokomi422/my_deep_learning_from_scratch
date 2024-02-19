@@ -1,6 +1,8 @@
 import numpy as np
 from pydantic import BaseModel,Field
 
+from functions import cross_entropy,softmax
+
 
 class ReLuLayer:
     """
@@ -79,6 +81,7 @@ class AffineLayer:
     """
     入力データの行列Xと重みWの行列積のレイヤー
     """
+
     def __init__(self,W: np.ndarray,b: np.ndarray):
         self.W: np.ndarray | None = W
         self.b: np.ndarray | None = b
@@ -99,7 +102,7 @@ class AffineLayer:
         """
         # テンソルにも対応しているらしいが、わからず
         self.original_x_shape = x.shape
-        x = x.reshape(x.shape[0], -1)
+        x = x.reshape(x.shape[0],-1)
         self.x = x
         out = x @ self.W + self.b
 
@@ -116,8 +119,36 @@ class AffineLayer:
         # dxは次のノードに渡す値なので、保持する必要がない
         dx = dout @ self.W.T
         self.dW = self.x.T @ dout
-        self.db = np.sum(dout, axis=0)
+        self.db = np.sum(dout,axis=0)
 
         dx = dx.reshape(*self.original_x_shape)  # 入力データの形状に戻す（テンソル対応）
         return dx
 
+
+class SoftmaxWithLoss:
+    """
+    導出は付録を参照
+    """
+
+    def __init__(self):
+        self.loss = None
+        self.y = None  # softmaxの出力
+        self.t = None  # 教師データ
+
+    def forward(self,x,t):
+        self.t = t
+        self.y = softmax(x)
+        self.loss = cross_entropy(self.y,self.t)
+
+        return self.loss
+
+    def backward(self,dout = 1):
+        batch_size = self.t.shape[0]
+        if self.t.size == self.y.size:  # 教師データがone-hot-vectorの場合
+            dx = (self.y - self.t) / batch_size
+        else:
+            dx = self.y.copy()
+            dx[np.arange(batch_size),self.t] -= 1
+            dx = dx / batch_size
+
+        return dx
