@@ -125,7 +125,7 @@ class AffineLayer:
         return dx
 
 
-class SoftmaxWithLoss:
+class SoftmaxWithLossLayer:
     """
     導出は付録を参照
     """
