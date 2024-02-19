@@ -4,9 +4,8 @@ import numpy as np
 # OrderedDictは追加した順番を保持する辞書
 from collections import OrderedDict
 
-from functions import sigmoid,softmax,cross_entropy
-from layers import AffineLayer,ReLuLayer,SigmoidLayer,SoftmaxWithLossLayer
-from gradient import numerical_gradient
+from .layers import AffineLayer,ReLuLayer,SigmoidLayer,SoftmaxWithLossLayer
+from .gradient import numerical_gradient
 
 
 class TwoLyNNParams(BaseModel):
@@ -22,10 +21,10 @@ sys.path.append(os.pardir)
 class TwoLayerNet:
     def __init__(self,params: TwoLyNNParams):
         self.params = {
-            "W1": params.weight_init_std * np.random.randn(params.input_size,params.hidden_size),
-            "b1": params.weight_init_std * np.zeros(params.hidden_size),
-            "W2": params.weight_init_std * np.random.randn(params.hidden_size,params.output_size),
-            "b2": params.weight_init_std * np.zeros(params.output_size)
+            "W1": params["weight_init_std"] * np.random.randn(params["input_size"],params["hidden_size"]),
+            "b1": params["weight_init_std"] * np.zeros(params["hidden_size"]),
+            "W2": params["weight_init_std"] * np.random.randn(params["hidden_size"],params["output_size"]),
+            "b2": params["weight_init_std"] * np.zeros(params["output_size"])
         }
         # レイヤーの作成
         self.layers = OrderedDict()
@@ -44,6 +43,14 @@ class TwoLayerNet:
     def loss(self,x,t):
         y = self.predict(x)
         return self.lastLayer.forward(y,t)
+
+    def accuracy(self,x,t):
+        y = self.predict(x)
+        y = np.argmax(y,axis=1)
+        if t.ndim != 1: t = np.argmax(t,axis=1)
+
+        accuracy = np.sum(y == t) / float(x.shape[0])
+        return accuracy
 
     def numerical_gradient(self,x,t):
         loss_W = lambda W: self.loss(x,t)

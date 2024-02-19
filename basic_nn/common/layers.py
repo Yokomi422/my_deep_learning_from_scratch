@@ -1,7 +1,7 @@
 import numpy as np
 from pydantic import BaseModel,Field
 
-from functions import cross_entropy,softmax
+from .functions import cross_entropy,softmax
 
 
 class ReLuLayer:
