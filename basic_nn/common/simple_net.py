@@ -1,6 +1,6 @@
 import numpy as np
 import pickle
-import sys,os
+import os
 
 from .functions import sigmoid, softmax, cross_entropy
 from .gradient import numerical_gradient
@@ -9,6 +9,9 @@ save_file = "trained_params.pkl"
 
 
 class SimpleNeuralNetwork:
+    """
+    第4章までのニューラルネットワークの実装
+    """
     def __init__(self,input_size,hidden_size,output_size,weight_init_std: float = 1):
         self.params = {}
 
