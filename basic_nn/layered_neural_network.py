@@ -1,10 +1,12 @@
-import sys, os
+import os
+import sys
+
 import numpy as np
 
 sys.path.append(os.pardir)
 
+from basic_nn.common.layered_network import TwoLayerNet, TwoLyNNParams
 from data.cifar import load_cifar
-from basic_nn.common.layered_network import TwoLayerNet
 
 """
 第5章の逆誤差伝播法を用いたニューラルネットワークの実装
@@ -19,15 +21,17 @@ epochs = 100
 # バッチサイズは79ページ参照
 batch_size = 100
 
-(x_train,t_train),(x_test,t_test) = load_cifar(normalize=True,one_hot_label=True,flatten=True)
+(x_train, t_train), (x_test, t_test) = load_cifar(
+    normalize=True, one_hot_label=True, flatten=True
+)
 
 # ネットワークの初期化 keyを書かないと、setとみなされるので注意する
-params = {
-    "input_size": input_size,
-    "hidden_size": hidden_size,
-    "output_size": output_size,
-    "weight_init_std": 0.01,
-}
+params: TwoLyNNParams = TwoLyNNParams(
+    input_size=input_size,
+    hidden_size=hidden_size,
+    output_size=output_size,
+    weight_init_std=weight_init_std,
+)
 network = TwoLayerNet(params=params)
 iter_nums = 1000
 train_size = x_train.shape[0]
@@ -52,8 +56,8 @@ for i in range(iter_nums):
     train_loss_list.append(loss)
 
     if i % iter_per_epoch == 0:
-        train_acc = network.accuracy(x_train,t_train)
-        test_acc = network.accuracy(x_test,t_test)
+        train_acc = network.accuracy(x_train, t_train)
+        test_acc = network.accuracy(x_test, t_test)
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
-        print(train_acc,test_acc)
+        print(train_acc, test_acc)
