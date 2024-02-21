@@ -1,18 +1,19 @@
 import sys
 
 import numpy as np
-from pydantic import BaseModel, Field
 
 from basic_nn.common.functions import cross_entropy, softmax
+from basic_nn.common.layers.type import Layer
 
 
-class ReLuLayer:
+class ReLuLayer(Layer):
     """
     x <= 0なら0, x > 0ならxを出力する活性化関数レイヤー
     xは多次元でも対応できる
     """
 
     def __init__(self):
+        super().__init__()
         self.mask: np.ndarray | None = None
 
     def forward(self, x: np.ndarray):
@@ -45,12 +46,13 @@ class ReLuLayer:
         return dx
 
 
-class SigmoidLayer:
+class SigmoidLayer(Layer):
     """
     Sigmoid関数の活性化レイヤー
     """
 
     def __init__(self):
+        super().__init__()
         self.out: float
 
     def forward(self, x: np.ndarray):
@@ -79,12 +81,13 @@ class SigmoidLayer:
         return dx
 
 
-class AffineLayer:
+class AffineLayer(Layer):
     """
     入力データの行列Xと重みWの行列積のレイヤー
     """
 
     def __init__(self, W: np.ndarray, b: np.ndarray):
+        super().__init__()
         self.original_x_shape: tuple[int, ...] | None = None
         self.W: np.ndarray = W
         self.b: np.ndarray = b
@@ -129,12 +132,13 @@ class AffineLayer:
         return dx
 
 
-class SoftmaxWithLossLayer:
+class SoftmaxWithLossLayer(Layer):
     """
     導出は付録を参照
     """
 
     def __init__(self):
+        super().__init__()
         self.loss = None
         self.y = None  # softmaxの出力
         self.t = None  # 教師データ
@@ -156,3 +160,36 @@ class SoftmaxWithLossLayer:
             dx = dx / batch_size
 
         return dx
+
+
+class MultipleLayer(Layer):
+    """
+    掛け算ノードの実装
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.x: float
+        self.y: float
+
+    def forward(self, x: float, y: float):
+        self.x = x
+        self.y = y
+        return x * y
+
+    def backward(self, dout: float):
+        dx = dout * self.y
+        dy = dout * self.x
+
+        return dx, dy
+
+
+class AddLayer(Layer):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x: float, y: float):
+        return x + y
+
+    def backward(self, dout):
+        return dout, dout
