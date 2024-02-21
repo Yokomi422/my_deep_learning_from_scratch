@@ -7,8 +7,8 @@ import numpy as np
 from pydantic import BaseModel, Field
 
 from basic_nn.common.gradient import numerical_gradient
-from basic_nn.common.layers import (AffineLayer, ReLuLayer, SigmoidLayer,
-                                    SoftmaxWithLossLayer)
+from basic_nn.common.layers.layers import (AffineLayer, ReLuLayer,
+                                           SigmoidLayer, SoftmaxWithLossLayer)
 
 
 class TwoLyNNParams(BaseModel):
