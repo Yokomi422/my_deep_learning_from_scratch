@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 
-from basic_nn.common.functions import cross_entropy,softmax
+from basic_nn.common.functions import cross_entropy, softmax
 from basic_nn.common.layers.type import Layer
 
 
@@ -16,7 +16,7 @@ class ReLuLayer(Layer):
         super().__init__()
         self.mask: np.ndarray | None = None
 
-    def forward(self,x: np.ndarray):
+    def forward(self, x: np.ndarray):
         """
         順伝播を行う
 
@@ -32,7 +32,7 @@ class ReLuLayer(Layer):
 
         return out
 
-    def backward(self,dout: np.ndarray):
+    def backward(self, dout: np.ndarray):
         """
         逆伝播を行う
         Parameters:
@@ -46,15 +46,16 @@ class ReLuLayer(Layer):
         return dx
 
 
-class SigmoidLayer:
+class SigmoidLayer(Layer):
     """
     Sigmoid関数の活性化レイヤー
     """
 
     def __init__(self):
+        super().__init__()
         self.out: float
 
-    def forward(self,x: np.ndarray):
+    def forward(self, x: np.ndarray):
         """
         順伝播を行う
         Parameters:
@@ -67,7 +68,7 @@ class SigmoidLayer:
 
         return out
 
-    def backward(self,dout: np.ndarray):
+    def backward(self, dout: np.ndarray):
         """
         逆伝播を行う
         Parameters:
@@ -80,13 +81,14 @@ class SigmoidLayer:
         return dx
 
 
-class AffineLayer:
+class AffineLayer(Layer):
     """
     入力データの行列Xと重みWの行列積のレイヤー
     """
 
-    def __init__(self,W: np.ndarray,b: np.ndarray):
-        self.original_x_shape: tuple[int,...] | None = None
+    def __init__(self, W: np.ndarray, b: np.ndarray):
+        super().__init__()
+        self.original_x_shape: tuple[int, ...] | None = None
         self.W: np.ndarray = W
         self.b: np.ndarray = b
 
@@ -95,7 +97,7 @@ class AffineLayer:
         self.dW: np.ndarray
         self.db: np.ndarray
 
-    def forward(self,x: np.ndarray):
+    def forward(self, x: np.ndarray):
         """
         順伝播を行う
         Parameters:
@@ -105,13 +107,13 @@ class AffineLayer:
         """
         # テンソルにも対応しているらしいが、わからず
         self.original_x_shape = x.shape
-        x = x.reshape(x.shape[0],-1)
+        x = x.reshape(x.shape[0], -1)
         self.x = x
         out = x @ self.W + self.b
 
         return out
 
-    def backward(self,dout: np.ndarray):
+    def backward(self, dout: np.ndarray):
         """
         逆伝播を行う
         Parameters:
@@ -122,7 +124,7 @@ class AffineLayer:
         # dxは次のノードに渡す値なので、保持する必要がない
         dx = dout @ self.W.T
         self.dW = self.x.T @ dout
-        self.db = np.sum(dout,axis=0)
+        self.db = np.sum(dout, axis=0)
 
         dx = dx.reshape(
             *self.original_x_shape
@@ -130,30 +132,31 @@ class AffineLayer:
         return dx
 
 
-class SoftmaxWithLossLayer:
+class SoftmaxWithLossLayer(Layer):
     """
     導出は付録を参照
     """
 
     def __init__(self):
+        super().__init__()
         self.loss = None
         self.y = None  # softmaxの出力
         self.t = None  # 教師データ
 
-    def forward(self,x,t):
+    def forward(self, x, t):
         self.t = t
         self.y = softmax(x)
-        self.loss = cross_entropy(self.y,self.t)
+        self.loss = cross_entropy(self.y, self.t)
 
         return self.loss
 
-    def backward(self,dout = 1):
+    def backward(self, dout=1):
         batch_size = self.t.shape[0]
         if self.t.size == self.y.size:  # 教師データがone-hot-vectorの場合
             dx = (self.y - self.t) / batch_size
         else:
             dx = self.y.copy()
-            dx[np.arange(batch_size),self.t] -= 1
+            dx[np.arange(batch_size), self.t] -= 1
             dx = dx / batch_size
 
         return dx
@@ -163,18 +166,30 @@ class MultipleLayer(Layer):
     """
     掛け算ノードの実装
     """
+
     def __init__(self):
         super().__init__()
-        self.x: float | None = None
-        self.y: float | None = None
+        self.x: float
+        self.y: float
 
-    def forward(self,x: float,y: float):
+    def forward(self, x: float, y: float):
         self.x = x
         self.y = y
         return x * y
 
-    def backward(self,dout: float):
+    def backward(self, dout: float):
         dx = dout * self.y
         dy = dout * self.x
 
-        return dx,dy
+        return dx, dy
+
+
+class AddLayer(Layer):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x: float, y: float):
+        return x + y
+
+    def backward(self, dout):
+        return dout, dout
