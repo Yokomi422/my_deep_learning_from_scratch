@@ -56,3 +56,9 @@ def create_co_matrix(
                 co_matrix[word_id, right_word_id] += 1
 
     return co_matrix
+
+
+def cos_similarity(x, y, eps=1e-4):
+    nx = x / (np.sqrt(np.sum(np.square(x))) + eps)
+    ny = y / (np.sqrt(np.sum(np.square(x))) + eps)
+    return nx @ ny
