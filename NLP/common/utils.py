@@ -64,3 +64,29 @@ def cos_similarity(x, y, eps=1e-4):
     nx = x / (np.sqrt(np.sum(np.square(x))) + eps)
     ny = y / (np.sqrt(np.sum(np.square(y))) + eps)
     return nx @ ny
+
+
+def most_similarity(
+    query: str, word_to_id: bidict, word_matrix: np.ndarray, top: int = 5
+):
+    if query not in word_to_id:
+        ValueError(f"{query} is not found")
+
+    print("\n[query] ", query)
+    query_id = word_to_id[query]
+    query_vec = word_matrix[query_id]
+
+    # calculate cos similarity
+    vocab_size = len(word_to_id)
+    similarity = np.zeros(vocab_size)
+    for i in range(vocab_size):
+        similarity[i] = cos_similarity(word_matrix[i], query_vec)
+
+    count = 0
+    for i in (-1 + similarity).argsort():
+        if word_to_id.inverse[i] == query:
+            continue
+        print(f"{word_to_id.inverse[i]}: {similarity[i]}")
+        count += 1
+        if count >= top:
+            return
